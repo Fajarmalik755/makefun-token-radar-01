@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Launch Radar — DeFi protocols with no token yet</title>
+<meta name="description" content="Every DeFi protocol tracked by DefiLlama with TVL over $5M that has not launched a token yet, ranked by what its launch would be worth. 100% offline.">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">DefiLlama snapshot &middot; no token yet</div>
+    <h1>Token Launch Radar<span class="dot">.</span></h1>
+    <p class="sub">Every DeFi protocol with TVL over $5M that has <b>not launched a token</b> — ranked by what
+    its launch would be worth. Implied value = TVL &times; the median market-cap/TVL of launched peers
+    in the same category. Click any row for the detail view and a farming plan.</p>
+    <div class="badges" id="badges"></div>
+  </header>
+
+  <section class="stats" id="stats" aria-label="Summary"></section>
+
+  <div class="toolbar" role="search">
+    <input type="search" id="q" placeholder="Search name, category or chain…" aria-label="Search protocols">
+    <select id="cat" aria-label="Filter by category"><option value="">All categories</option></select>
+    <select id="chain" aria-label="Filter by chain"><option value="">All chains</option></select>
+    <select id="sort" aria-label="Sort by">
+      <option value="implied">Sort: Implied value ↓</option>
+      <option value="tvl">Sort: TVL ↓</option>
+      <option value="score">Sort: Radar score ↓</option>
+      <option value="change7d">Sort: 7d change ↓</option>
+      <option value="change1d">Sort: 1d change ↓</option>
+      <option value="name">Sort: Name A–Z</option>
+    </select>
+    <button class="tgl" id="watchBtn" aria-pressed="false" title="Only protocols with TVL ≥ $50M">★ Watchlist ≥ $50M</button>
+    <button class="tgl star" id="starBtn" aria-pressed="false" title="Only protocols you starred">☆ My stars</button>
+    <button class="reset" id="resetBtn">Reset</button>
+  </div>
+
+  <div class="chips" id="chips" aria-label="Top categories"></div>
+  <p class="meta-line" id="countLine"></p>
+
+  <div class="table-card">
+    <table>
+      <thead><tr>
+        <th>Rank</th><th>Protocol</th><th>Category</th><th>Chains</th>
+        <th class="num">TVL</th><th class="num">1d</th><th class="num">7d</th>
+        <th class="num">Implied value</th><th>Radar score</th><th></th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="empty" id="empty" hidden>No protocols match these filters. <button class="reset" id="emptyReset">Clear filters</button></div>
+  </div>
+
+  <footer>
+    <p><b>Method.</b> Snapshot: DefiLlama <code>api.llama.fi/protocols</code>, 15 Nov 2026 (9,050 protocols),
+    reconciled at build time against the competition's sealed snapshot of 14 Nov 2026 so the board covers
+    every protocol on its 40-protocol watchlist. A protocol counts as tokenless when neither it nor any
+    sibling in its DefiLlama parent family records a CoinGecko id, CoinMarketCap id or market cap,
+    <i>and</i> no CoinGecko coin matches its symbol + name, exact name, or clean single-word name.
+    Bridges, liquid staking / restaking, wrapped, staked and bridged products, CEXs and chains are
+    excluded. Three manual overrides are documented in <code>scripts/build_board.py</code>. Full method
+    in the README.</p>
+    <p>Implied value is an estimate, not a prediction — many of these protocols may never launch a token.
+    Not financial advice. This page makes <b>no network requests</b>: all data is bundled in
+    <code>data.js</code>, written beside this page by <code>node main.ts</code>, and it works fully offline.</p>
+  </footer>
+</div>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+  <div class="modal" id="modal"></div>
+</div>
+
+<!-- data.js is written by `node main.ts` beside this page (out/data.js); it sets window.RADAR. -->
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
