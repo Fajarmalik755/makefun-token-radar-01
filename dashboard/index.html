@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Launch Radar — pre-token protocols ranked by expected value</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="wrap">
+<h1>Token Launch Radar</h1>
+<p class="sub">Pre-token protocols, ranked by <b>expected value</b> = comps-fitted implied value &times; token odds.
+Snapshot <span id="asOf">—</span> &middot; floor <span id="floor">—</span> &middot; model <span id="mVer">—</span> &middot; <span id="boardN">—</span> rows.
+No protocol name is special-cased: every row is scored by the same functions from the snapshot's own figures.</p>
+</header>
+<main class="wrap">
+<section id="integrity" aria-label="Integrity: where all 758 protocols went"></section>
+<nav class="tabs" aria-label="Views">
+<button id="tabBoard" class="tab on" type="button">Board</button>
+<button id="tabLive" class="tab" type="button">Live tokens (24)</button>
+<button id="tabMethod" class="tab" type="button">Method &amp; validation</button>
+</nav>
+<section id="boardSec">
+<div class="controls">
+<input id="q" type="search" placeholder="Search name or slug…" aria-label="Search protocols">
+<select id="fCat" aria-label="Filter by category"><option value="">All categories</option></select>
+<select id="fChain" aria-label="Filter by chain"><option value="">All chains</option></select>
+<select id="fVerdict" aria-label="Filter by farm verdict">
+<option value="">All verdicts</option><option>FARM</option><option>THIN</option><option>SKIP</option>
+</select>
+<label class="chk"><input id="fWatch" type="checkbox"> Watchlist only</label>
+<span id="count" class="count" aria-live="polite"></span>
+</div>
+<p class="hint">Click a column header to sort. Click a row for the model breakdown and farm plan.</p>
+<div class="scroll"><table id="board">
+<thead><tr>
+<th data-k="rank" class="on">#</th><th data-k="name">Protocol</th><th data-k="category">Category</th>
+<th data-k="tvl_usd" class="num">TVL</th><th data-k="change_7d" class="num">7d</th>
+<th data-k="age_days" class="num">Age</th><th data-k="token_odds" class="num">Token odds</th>
+<th data-k="implied_value_usd" class="num">Expected value</th><th data-k="verdict">Verdict</th>
+</tr></thead>
+<tbody id="rows"></tbody>
+</table></div>
+</section>
+<section id="detail" hidden aria-live="polite"></section>
+<section id="liveSec" hidden>
+<p class="hint">Traded protocols, at the market's own value — never a model's. Top 24 by market cap. Kept apart from the board.</p>
+<div class="scroll"><table>
+<thead><tr><th>#</th><th>Protocol</th><th>Category</th><th class="num">TVL</th><th class="num">Market cap</th><th class="num">Mcap / TVL</th><th class="num">7d</th></tr></thead>
+<tbody id="liveRows"></tbody>
+</table></div>
+</section>
+<section id="methodSec" hidden>
+<h2>How this board was built</h2>
+<h3>The formula</h3>
+<p class="formula">expected = TVL &times; ratio<sub>cat</sub> &times; size &times; growth &times; maturity &times; odds</p>
+<p>Implied value starts from the traded comps: log-log OLS log(mcap) = <b id="fitEq">—</b>,
+fitted on <b id="fitN">—</b> traded tokens that record both a market cap and a TVL.
+The category ratio is the median mcap/TVL of that category's comps, shrunk toward the
+global median (8 pseudo-counts) and capped at <b id="fitCap">—</b> (2&times; the global upper
+quartile). Size corrects with the log-log slope, so bigger protocols earn a lower multiple.
+Growth is the 7-day change clamped to −60…+120%, halved into a multiplier. Maturity rises
+0.6 → 1.0 over three years since listing. Token odds are the traded share of the
+protocol's own age / TVL / growth bucket, shrunk toward the global traded rate
+(<b id="fitRate">—</b>). Rank is by expected value, highest first.</p>
+<h3>Held-out validation — the fit tested, not just fitted</h3>
+<p>Split-half is run twice (even/odd by slug, then first/second half), fitting on one half
+and testing on the other, both directions, so every comp is scored held-out. Leave-one-out
+refits on the other 127 comps for each comp in turn.</p>
+<table class="small"><thead><tr><th>Test</th><th class="num">Train n</th><th class="num">Test n</th><th class="num">MAPE</th><th class="num">Median APE</th><th class="num">Within 2&times;</th></tr></thead>
+<tbody id="valRows"></tbody></table>
+<h3>Limits — read before trusting a number</h3>
+<ul>
+<li>The fit is honest but weak: R&sup2; = <b id="fitR2">—</b>. TVL alone explains little of market cap; the interval (low–high) on each row is wide for that reason.</li>
+<li>Snapshot is sealed at <span id="asOf2">—</span>. Nothing here is live; prices and TVL have moved since.</li>
+<li>“Pre-token” means the snapshot <i>records no token</i> for the protocol — not proof it has no token.</li>
+<li>Category ratios are capped at 2&times; the global upper quartile; a one-comp category cannot set the board.</li>
+<li>Farm maths assumes one qualifying wallet takes 1/20,000 of the implied value. Verdicts need a margin of safety: FARM at 10&times; cost, THIN at 3&times;, else SKIP.</li>
+<li>Gas is a snapshot-date estimate per chain; real gas, eligibility rules and airdrop criteria are the protocol's own, and may exclude farmers entirely.</li>
+</ul>
+</section>
+</main>
+<footer class="wrap"><p>All figures from the sealed snapshot via <code>window.RADAR</code>. No network, no framework, no external assets.</p></footer>
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
